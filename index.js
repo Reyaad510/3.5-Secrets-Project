@@ -13,8 +13,23 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const app = express();
 const port = 3000;
 
+let userIsAuthorized = false;
+
 
 app.use(bodyParser.urlencoded({ extended: true }));
+
+let checkPassword = (req,res,next) => {
+
+   let password = req.body["password"];
+
+    if(password === "ILoveProgramming") {
+        userIsAuthorized = true;
+        console.log("true")
+    }
+    next();
+}
+
+app.use(checkPassword);
 
 
 app.get("/", (req, res)=> {
@@ -25,9 +40,11 @@ app.get("/", (req, res)=> {
 
 
 app.post("/check", (req,res)=> {
-
+    if(userIsAuthorized) {
     res.sendFile(__dirname + "/public/secret.html");
-
+} else {
+    res.sendFile(__dirname + "/public/index.html");
+}
 })
 
 
